@@ -1,0 +1,52 @@
+name: Sync data
+
+# The data is crawled and refreshed in mjsilverman19/book-critic-data. Rather than crawl the source a second time,
+# this copies data/ from there each day, after that repo's refresh has run, and redeploys when anything changed.
+on:
+  schedule:
+    - cron: "17 12 * * *"  # daily, 8:17 a.m. Eastern (EDT), two hours after the upstream refresh
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: mjsilverman19/book-critic-data
+          path: upstream
+          sparse-checkout: data
+      - run: rsync -a --delete upstream/data/ data/ && rm -rf upstream
+      - id: commit
+        name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --cached --stat
+            git commit -m "Sync data from book-critic-data $(date -u +%F)"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml

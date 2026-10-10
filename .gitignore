@@ -1,0 +1,7 @@
+*.db
+__pycache__/
+export/
+site/data/
+
+# backfill working files
+backfill/work/

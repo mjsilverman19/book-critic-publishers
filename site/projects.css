@@ -1,0 +1,34 @@
+/* Project pages: one column of plain sections, same type and greys as the rest of the explorer */
+.proj { max-width: 1080px; }
+.proj input.title, .proj textarea.pitch, .proj input.find {
+  font: inherit; color: inherit; background: none; border: 0; outline: 0; padding: 0; margin: 0; width: 100%; }
+.proj input.title { font-size: 20px; margin-bottom: 4px; }
+.proj textarea.pitch { resize: none; max-width: 680px; display: block; overflow: hidden; min-height: 1.5em; }
+.proj input.title::placeholder, .proj textarea.pitch::placeholder, .proj input.find::placeholder { color: var(--dim); }
+.proj .meta { margin: 12px 0 0; }
+.proj .jump { color: var(--dim); display: flex; gap: 4px 16px; flex-wrap: wrap; margin-top: 8px; }
+.proj .brief { max-width: 680px; margin: 28px 0 0; }
+.proj h2.sec { margin-top: 48px; }
+.proj .find { border-bottom: 1px solid var(--line); padding: 6px 0; margin-top: 12px; max-width: 420px; }
+.proj .hits { margin: 0; padding: 0; list-style: none; max-width: 680px; }
+.proj .hits li { padding: 5px 0; border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: baseline; }
+.proj .hits li .grow { flex: 1; min-width: 0; }
+.proj .x { color: var(--dim); }
+.proj .x:hover { color: var(--fg); }
+.mix { display: inline-flex; width: 72px; height: 6px; vertical-align: middle; background: var(--line); }
+.mix.wide { width: 100%; max-width: 680px; height: 10px; display: flex; margin: 10px 0 6px; }
+.mix i { display: block; height: 100%; background: var(--fg); }
+.mix i.r4 { opacity: 1; } .mix i.r3 { opacity: .55; } .mix i.r2 { opacity: .25; } .mix i.r1 { background: none; }
+.proj .legend { color: var(--dim); display: flex; gap: 16px; flex-wrap: wrap; }
+.proj .legend b { font-weight: normal; color: var(--fg); }
+.proj svg.trend { display: block; width: 100%; max-width: 680px; height: auto; margin-top: 12px; overflow: visible; }
+.proj svg.trend text { fill: var(--dim); font-size: 11px; }
+.proj svg.trend .bar { fill: var(--line); }
+.proj svg.trend .line { fill: none; stroke: var(--fg); stroke-width: 1.5; }
+.proj svg.trend .dot { fill: var(--fg); }
+.proj .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); column-gap: 48px; }
+.proj .quotes .rev { max-width: 680px; }
+.proj .filters { color: var(--dim); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.proj .loading { color: var(--dim); padding: 12px 0; }
+.proj input.find { margin-top: 20px; }
+.proj .narrow { max-width: 680px; }

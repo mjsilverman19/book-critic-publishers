@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comps</title>
+<style>
+:root { --fg: #111; --dim: #888; --line: #e6e6e6; --bg: #fff; }
+@media (prefers-color-scheme: dark) { :root { --fg: #e8e8e8; --dim: #777; --line: #262626; --bg: #111; } }
+* { box-sizing: border-box; }
+html { background: var(--bg); color: var(--fg); -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0 auto; max-width: 1440px; padding: 32px 24px 96px; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; }
+nav { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; margin-bottom: 24px; }
+nav a { color: var(--dim); }
+nav a.on { color: var(--fg); }
+nav .n { margin-left: auto; color: var(--dim); font-variant-numeric: tabular-nums; }
+.bar { display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; border-bottom: 1px solid var(--fg); }
+input, select { font: inherit; color: inherit; background: none; border: 0; outline: 0; padding: 6px 0; margin: 0; }
+select { color: var(--dim); cursor: pointer; }
+select { field-sizing: content; max-width: 220px; }
+select.set { color: var(--fg); }
+select:hover { color: var(--fg); }
+#q { flex: 1; min-width: 160px; }
+#min { width: 2.5em; text-align: right; -moz-appearance: textfield; }
+#min::-webkit-inner-spin-button, #min::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.bar label { color: var(--dim); white-space: nowrap; }
+.chips { display: flex; gap: 16px; flex-wrap: wrap; min-height: 8px; padding: 8px 0 0; color: var(--dim); }
+.chips:empty { padding: 0; }
+.chips a b { font-weight: normal; color: var(--fg); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin-top: 8px; }
+th { font-weight: normal; color: var(--dim); text-align: left; padding: 6px 12px 6px 0; cursor: pointer; user-select: none; white-space: nowrap; }
+th.on { color: var(--fg); }
+th[title] { text-decoration: underline dotted var(--line); text-underline-offset: 4px; }
+td { padding: 5px 12px 5px 0; border-top: 1px solid var(--line); vertical-align: top; }
+th:last-child, td:last-child { padding-right: 0; }
+.r { text-align: right; white-space: nowrap; }
+.nw { white-space: nowrap; }
+.f { cursor: pointer; }
+.f:hover { text-decoration: underline; }
+.scroll { overflow-x: auto; }
+.d { color: var(--dim); }
+.sub, .m-only { display: none; }
+h1 { font-size: 20px; font-weight: normal; margin: 0 0 2px; }
+.meta { color: var(--dim); margin-bottom: 16px; }
+.meta a:hover { color: var(--fg); }
+.desc { max-width: 640px; margin: 0 0 32px; }
+.rev { padding: 12px 0; border-top: 1px solid var(--line); }
+.rev .h { color: var(--dim); }
+.rev .h b { font-weight: normal; color: var(--fg); }
+.rev p { margin: 4px 0 0; max-width: 680px; }
+#more { height: 1px; }
+.empty { color: var(--dim); padding: 24px 0; }
+.empty a { color: var(--fg); }
+button.tx { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; }
+button.tx:hover { color: var(--fg); text-decoration: underline; }
+button.tx.on { color: var(--fg); }
+h2.sec { font: inherit; margin: 56px 0 2px; }
+.plain th { cursor: default; }
+button.more { margin-top: 12px; color: var(--dim); }
+body.book-page { display: grid; grid-template-columns: minmax(0, 680px) 160px; column-gap: 48px; }
+.book-page nav { grid-column: 1 / -1; }
+.book-page #head, .book-page #out { grid-column: 1; }
+.book-page #head { grid-row: 2; }
+.book-page #out { grid-row: 3; }
+#book-cover[hidden] { display: none; }
+#book-cover { grid-column: 2; grid-row: 2 / 4; align-self: start; position: sticky; top: 32px; }
+#book-cover img { display: block; width: 100%; height: auto; max-height: 250px; object-fit: contain;
+  object-position: top center; border-radius: 3px; }
+#book-cover button { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+#book-cover button:focus-visible { outline: 2px solid var(--fg); outline-offset: 5px; }
+html.cover-open { overflow: hidden; }
+#cover-dialog { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100dvh; overflow: auto; outline: none; cursor: zoom-out; }
+#cover-dialog::backdrop { background: #fff; }
+#cover-dialog img { display: block; width: auto; height: auto; max-width: min(80vw, 640px); max-height: 80dvh; margin: auto; }
+@media (max-width: 900px) {
+  body.book-page { grid-template-columns: minmax(0, 1fr) 160px; column-gap: 32px; }
+}
+@media (max-width: 640px) {
+  body.book-page { display: block; }
+  #book-cover { position: static; width: 140px; margin: 0 0 28px; }
+  body { padding: 24px 16px 96px; font-size: 13px; }
+  th, td { padding-right: 10px; }
+  td { white-space: nowrap; }
+  .sub { display: block; color: var(--dim); }
+  .desk, .md { display: none; }
+  td:first-child { min-width: 150px; white-space: normal; }
+  td.list { min-width: 240px; white-space: normal; }
+  th:first-child, td:first-child { position: sticky; left: 0; background: var(--bg); z-index: 1; }
+  .scroll { margin-right: -16px; padding-right: 16px; }
+}
+</style>
+<link rel="stylesheet" href="preview.css">
+<link rel="stylesheet" href="projects.css">
+</head>
+<body>
+<nav>
+  <a href="#/books" data-v="books">Books</a>
+  <a href="#/critics" data-v="critics">Critics</a>
+  <a href="#/authors" data-v="authors">Authors</a>
+  <a href="#/outlets" data-v="outlets">Outlets</a>
+  <a href="#/projects" data-v="projects">Projects</a>
+  <span class="n" id="count"></span>
+</nav>
+<div id="head"></div>
+<aside id="book-cover" aria-label="Book cover" hidden></aside>
+<dialog id="cover-dialog" aria-label="Larger book cover; click or press Escape to close" tabindex="-1">
+  <img alt="" referrerpolicy="no-referrer">
+</dialog>
+<div id="controls">
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
+    <select id="g" class="bk"><option value="">All genres</option></select>
+    <select id="p" class="bk"><option value="">All publishers</option></select>
+    <select id="y" class="bk"><option value="">All years</option></select>
+    <label>min reviews <input id="min" type="number" min="1" inputmode="numeric"></label>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+<div id="out"><p class="empty">Loading…</p></div>
+<div id="more"></div>
+<div id="below"></div>
+
+<script>
+const LABEL = ['', 'pan', 'mixed', 'positive', 'rave'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const f2 = x => x == null || isNaN(x) ? '' : x.toFixed(2);
+const sgn = x => x == null || isNaN(x) ? '' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(2);
+const int = x => x.toLocaleString('en-US');
+const enc = encodeURIComponent;
+const fold = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[.'\u2019]/g, '');
+
+const TIP = {
+  adj: 'Mean pulled toward the overall mean (3.27) as if the book had 10 extra average reviews, so books with few reviews do not dominate',
+  vs: 'Average gap between this rating and the mean of the other reviews of the same book (books with 4+ reviews; shown at 20+)',
+  loo: 'Mean of the other reviews of this book',
+  overall: 'Overall verdict across the reviews, as published with them',
+  adjA: 'Mean of all reviews of the author’s books, pulled toward the overall mean (3.27) as if they had 10 extra average reviews',
+};
+
+const baseAuthor = s => String(s || '').replace(/,?\s*(?:\(|;)?\s*\b(?:trans(?:lated)?\.?|tr\.?|ed(?:ited)?\.?|illus(?:trated)?\.?|intro(?:duction|duced)?\.?)\s+(?:by\b)?.*$/i, '').replace(/[\s,;]+$/, '').trim();
+let B = [], C = [], O = [], A = [], R = [], bySlug = {}, cByName = {}, oByName = {}, shards = 128;
+const cache = {};
+
+function shardOf(slug) { let h = 0; for (const ch of slug) h = (Math.imul(h, 31) + ch.codePointAt(0)) >>> 0; return h % shards; }
+async function detail(slug) {
+  const k = shardOf(slug);
+  cache[k] ??= fetch(`data/reviews/${k}.json`).then(r => {
+    if (!r.ok) throw new Error('Book details unavailable');
+    return r.json();
+  }).catch(error => { delete cache[k]; throw error; });
+  return (await cache[k])[slug] || { d: '', r: [] };
+}
+
+// ---- aggregates, recomputed when the source filter changes ----
+// src: '' all reviews, 'bm' Book Marks only, 'bf' backfill only (Complete Review grades and model-predicted ratings)
+let CA = [], OA = [], RA = [], aggSrc = null;
+function aggregate(src) {
+  if (src === aggSrc) return;
+  aggSrc = src;
+  const keep = r => !src || (src === 'bm' ? r.src === 0 : r.src > 0);
+  for (const b of B) { b.dist = [0, 0, 0, 0]; b.sum = 0; b.cnt = 0; }
+  const ent = (name, i) => ({ i, name, n: 0, sum: 0, dev: 0, dn: 0, dist: [0, 0, 0, 0], set: new Set(), hay: fold(name) });
+  C = CA.map(ent); O = OA.map(ent); cByName = {}; oByName = {};
+  R = RA.filter(keep).map(r => ({ b: r.b, v: r.v, c: C[r.ci], o: O[r.oi], src: r.src }));
+  // v 0 = review without a rating: counted in Reviews, left out of the rating counts and means
+  for (const r of R) { r.b.all = (r.b.all || 0) + 1; if (r.v) { r.b.sum += r.v; r.b.cnt++; r.b.dist[4 - r.v]++; } }
+  for (const b of B) { b.n = b.all || 0; b.all = 0; b.mean = b.cnt ? b.sum / b.cnt : null; b.adj = b.cnt ? (b.sum + 10 * 3.27) / (b.cnt + 10) : null; }
+  for (const r of R) {
+    r.loo = r.v && r.b.cnt > 1 ? (r.b.sum - r.v) / (r.b.cnt - 1) : r.v ? null : (r.b.cnt ? r.b.sum / r.b.cnt : null);
+    for (const [e, other] of [[r.c, r.o], [r.o, r.c]]) {
+      if (!e) continue;
+      e.n++; if (other) e.set.add(other.i);
+      if (!r.v) continue;
+      e.rn = (e.rn || 0) + 1; e.sum += r.v; e.dist[4 - r.v]++;
+      if (r.b.cnt >= 4) { e.dev += r.v - r.loo; e.dn++; }
+    }
+  }
+  for (const e of [...C, ...O]) { e.mean = e.rn ? e.sum / e.rn : null; e.vs = e.dn >= 20 ? e.dev / e.dn : null; e.links = e.set.size; }
+  C = C.filter(c => c.n); O = O.filter(o => o.n);
+  C.forEach(c => cByName[c.name] = c); O.forEach(o => oByName[o.name] = o);
+  const am = {};
+  for (const b of B) {
+    if (!b.aut || !b.n) continue;
+    const a = am[b.aut] ??= { name: b.aut, books: 0, n: 0, sum: 0, dist: [0, 0, 0, 0], hay: fold(b.aut) };
+    a.books++; a.n += b.n; a.rn = (a.rn || 0) + b.cnt; a.sum += b.sum; b.dist.forEach((x, j) => a.dist[j] += x);
+  }
+  A = Object.values(am).filter(a => a.n);
+  for (const a of A) { a.mean = a.rn ? a.sum / a.rn : null; a.adj = a.rn ? (a.sum + 10 * 3.27) / (a.rn + 10) : null; }
+}
+
+async function load() {
+  const [books, idx] = await Promise.all(['books', 'index'].map(f => fetch(`data/${f}.json`).then(r => r.json())));
+  shards = idx.shards;
+  B = books.map(([slug, title, author, pub, date, genres, dist, mean, adj, isbn, overall, bf]) => ({
+    slug, title, author, pub, date, year: date ? +date.slice(0, 4) : null, genres, overall, bf: !!bf,
+    ov: { rave: 4, positive: 3, mixed: 2, pan: 1 }[overall] ?? null,
+    hay: fold([title, author, pub, isbn].join(' ')),
+  }));
+  B.forEach(b => { bySlug[b.slug] = b; b.aut = baseAuthor(b.author); });
+  CA = idx.critics; OA = idx.outlets;
+  RA = idx.reviews.map(([b, v, c, o, src]) => ({ b: B[b], v, ci: c, oi: o, src: src || 0 }));
+  aggregate(new URLSearchParams(location.hash.split('?')[1] || '').get('src') || '');
+  const gc = {}; B.forEach(b => b.genres.forEach(g => gc[g] = (gc[g] || 0) + 1));
+  $('#g').insertAdjacentHTML('beforeend', Object.keys(gc).sort().map(g => `<option value="${esc(g)}">${esc(g)} (${int(gc[g])})</option>`).join(''));
+  const pc = {}; B.forEach(b => b.pub && (pc[b.pub] = (pc[b.pub] || 0) + 1));
+  const sortName = s => s.replace(/^the\s+/i, '');
+  $('#p').insertAdjacentHTML('beforeend', Object.keys(pc).filter(p => pc[p] >= 5).sort((a, b) => sortName(a).localeCompare(sortName(b)))
+    .map(p => `<option value="${esc(p)}">${esc(p)} (${int(pc[p])})</option>`).join(''));
+  const years = [...new Set(B.map(b => b.year).filter(Boolean))].sort((a, b) => b - a);
+  $('#y').insertAdjacentHTML('beforeend', years.map(y => `<option>${y}</option>`).join(''));
+  route();
+}
+
+// ---- state lives in the URL: #/view/arg?q=&g=&y=&a=&p=&s=&d=&min= ----
+let S = {};
+function parse() {
+  const [path, qs = ''] = location.hash.slice(1).split('?');
+  const [, view = 'books', ...rest] = path.split('/');
+  const p = new URLSearchParams(qs);
+  return { view: V[view] ? view : 'books', arg: rest.length ? decodeURIComponent(rest.join('/')) : '', p };
+}
+function href(view, arg = '', params = {}) {
+  const p = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== '' && v != null));
+  return `#/${view}${arg ? '/' + enc(arg) : ''}${[...p].length ? '?' + p : ''}`;
+}
+function sync() {
+  const t = T || {};
+  const params = { q: S.q, g: S.g, y: S.y, a: S.a, p: S.p, src: S.src, min: S.min != t.defMin ? S.min : '', s: t.sort !== t.defSort ? t.sort : '', d: t.dir !== t.defDir ? t.dir : '' };
+  history.replaceState(null, '', href(S.view, S.arg, params));
+}
+
+// ---- table ----
+let T = null;
+function table(cols, rows, def) {
+  const p = S.params;
+  const sort = p.get('s') && cols.some(c => c.k === p.get('s')) ? p.get('s') : def.sort;
+  const col = cols.find(c => c.k === sort);
+  T = { cols, rows, noun: def.noun, name: def.name, empty: def.empty, sort, defSort: def.sort, defDir: -1, defMin: def.min,
+        dir: p.get('d') ? +p.get('d') : (sort === def.sort ? -1 : col.num ? -1 : 1), shown: 0 };
+  S.min = p.get('min') || def.min;
+  $('#min').value = S.min;
+  draw();
+}
+function filtered() {
+  const terms = fold(S.q).split(/\s+/).filter(Boolean);
+  const min = +S.min || 1, y = +S.y || 0;
+  const col = T.cols.find(c => c.k === T.sort);
+  const rows = T.rows.filter(r => (r.n ?? 99) >= min
+    && (!S.g || r.genres?.includes(S.g)) && (!y || r.year === y)
+    && (!S.a || r.aut === S.a) && (!S.p || r.pub === S.p)
+    && terms.every(t => r.hay.includes(t)));
+  const get = col.v || (r => r[col.k]);
+  rows.sort((a, b) => {
+    const x = get(a), z = get(b);
+    if (x == null || x === '') return 1; if (z == null || z === '') return -1;
+    return (typeof x === 'string' ? x.localeCompare(z) : x - z) * T.dir;
+  });
+  return rows;
+}
+function draw() {
+  T.view = filtered(); T.shown = 0;
+  const h = T.cols.map(c => `<th class="${c.num ? 'r ' : ''}${c.cls || ''}${c.k === T.sort ? ' on' : ''}" data-k="${c.k}"${c.tip ? ` title="${esc(c.tip)}"` : ''}>${c.label}${c.k === T.sort ? (T.dir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('');
+  $('#out').innerHTML = T.view.length ? `<div class="scroll"><table><thead><tr>${h}</tr></thead><tbody></tbody></table></div>` : `<p class="empty">${T.empty ? T.empty() : 'No matches'}</p>`;
+  const reviewCount = T.noun === 'reviews' ? '' : ' · ' + int(T.view.reduce((sum, row) => sum + row.n, 0)) + ' reviews';
+  $('#count').textContent = int(T.view.length) + ' ' + T.noun + reviewCount;
+  chips(); sync(); more();
+}
+function more() {
+  const tb = $('#out tbody'); if (!tb || T.shown >= T.view.length) return;
+  const end = Math.min(T.shown + 150, T.view.length);
+  tb.insertAdjacentHTML('beforeend', T.view.slice(T.shown, end).map(r =>
+    `<tr>${T.cols.map(c => `<td class="${c.num ? 'r ' : ''}${c.cls || ''}">${c.f ? c.f(r) : esc(r[c.k])}</td>`).join('')}</tr>`).join(''));
+  T.shown = end;
+}
+function chips() {
+  const set = [['a', 'Author']].filter(([k]) => S[k]);
+  $('#chips').innerHTML = set.map(([k, l]) => `<a href="#" data-clear="${k}">${l}: <b>${esc(S[k])}</b> ×</a>`).join('');
+  if (S.p && ![...$('#p').options].some(o => o.value === S.p)) $('#p').add(new Option(S.p, S.p));
+  for (const k of ['g', 'p', 'y']) { $('#' + k).value = S[k]; $('#' + k).classList.toggle('set', !!S[k]); }
+}
+
+new IntersectionObserver(e => e[0].isIntersecting && T && more(), { rootMargin: '800px' }).observe($('#more'));
+$('#out').addEventListener('click', e => {
+  const th = e.target.closest('th');
+  if (th) {
+    const col = T.cols.find(c => c.k === th.dataset.k);
+    if (T.sort === col.k) T.dir = -T.dir; else { T.sort = col.k; T.dir = col.num ? -1 : 1; }
+    return draw();
+  }
+  const f = e.target.closest('[data-fk]');
+  if (f) { S[f.dataset.fk] = f.dataset.fv; draw(); window.scrollTo(0, 0); }
+});
+$('#chips').addEventListener('click', e => { const a = e.target.closest('[data-clear]'); if (a) { e.preventDefault(); S[a.dataset.clear] = ''; draw(); } });
+let tm; $('#q').addEventListener('input', () => { clearTimeout(tm); tm = setTimeout(() => { S.q = $('#q').value; draw(); }, 80); });
+$('#g').addEventListener('change', () => { S.g = $('#g').value; draw(); });
+$('#y').addEventListener('change', () => { S.y = $('#y').value; draw(); });
+$('#p').addEventListener('change', () => { S.p = $('#p').value; draw(); });
+$('#min').addEventListener('input', () => { S.min = $('#min').value; draw(); });
+
+// ---- cells ----
+const bookLink = b => `<a href="#/book/${enc(b.slug)}" data-book-preview="${esc(b.slug)}">${esc(b.title)}</a>`;
+const titleCell = b => bookLink(b) + `<span class="sub">${esc(b.author)}</span>`;
+const dateCell = r => r.date ? `${r.date.slice(0, 4)}<span class="md">${r.date.slice(4)}</span>` : '';
+const cLink = c => c ? `<a href="#/critic/${enc(c.name)}">${esc(c.name)}</a>` : '<span class="d">Unsigned</span>';
+const oLink = o => o ? `<a href="#/outlet/${enc(o.name)}">${esc(o.name)}</a>` : '';
+const filt = (k, v) => v ? `<span class="f" data-fk="${k}" data-fv="${esc(v)}" title="Show only ${esc(v)}">${esc(v)}</span>` : '';
+const zero = x => x ? int(x) : '<span class="d">0</span>';
+const counts = (cls = '') => ['Rave', 'Positive', 'Mixed', 'Pan'].map((label, j) =>
+  ({ k: 'c' + j, label, num: 1, cls, v: r => r.dist[j], f: r => zero(r.dist[j]) }));
+const distTxt = d => `${d[0]} rave, ${d[1]} positive, ${d[2]} mixed, ${d[3]} pan`;
+
+// ---- views ----
+const V = {
+  books() {
+    table([
+      { k: 'title', label: 'Title', f: titleCell },
+      { k: 'author', label: 'Author', cls: 'desk', f: r => r.author ? `<span class="f" data-fk="a" data-fv="${esc(r.aut)}" title="Show only ${esc(r.aut)}">${esc(r.author)}</span>` : '' },
+      { k: 'date', label: 'Date', cls: 'nw', f: dateCell },
+      { k: 'ov', label: 'Overall', num: 1, tip: TIP.overall, f: r => esc(r.overall) },
+      { k: 'n', label: 'Reviews', num: 1 },
+      ...counts(),
+      { k: 'mean', label: 'Mean', num: 1, f: r => f2(r.mean) },
+      { k: 'adj', label: 'Adjusted', num: 1, tip: TIP.adj, f: r => f2(r.adj) },
+    ], B, { sort: 'adj', noun: 'books', min: 1 });
+  },
+  critics() {
+    table([
+      { k: 'name', label: 'Critic', f: cLink },
+      { k: 'n', label: 'Reviews', num: 1 },
+      { k: 'links', label: 'Outlets', num: 1 },
+      ...counts(),
+      { k: 'mean', label: 'Mean', num: 1, f: r => f2(r.mean) },
+      { k: 'vs', label: 'Vs. others', num: 1, tip: TIP.vs, f: r => sgn(r.vs) },
+    ], C, { sort: 'n', noun: 'critics', min: 10 });
+  },
+  authors() {
+    table([
+      { k: 'name', label: 'Author', f: r => `<a href="${href('books', '', { a: r.name })}">${esc(r.name)}</a>` },
+      { k: 'books', label: 'Books', num: 1 },
+      { k: 'n', label: 'Reviews', num: 1 },
+      ...counts(),
+      { k: 'mean', label: 'Mean', num: 1, f: r => f2(r.mean) },
+      { k: 'adj', label: 'Adjusted', num: 1, tip: TIP.adjA, f: r => f2(r.adj) },
+    ], A, { sort: 'n', noun: 'authors', min: 10 });
+  },
+  outlets() {
+    table([
+      { k: 'name', label: 'Outlet', f: oLink },
+      { k: 'n', label: 'Reviews', num: 1 },
+      { k: 'links', label: 'Critics', num: 1 },
+      ...counts(),
+      { k: 'mean', label: 'Mean', num: 1, f: r => f2(r.mean) },
+      { k: 'vs', label: 'Vs. others', num: 1, tip: TIP.vs, f: r => sgn(r.vs) },
+    ], O, { sort: 'n', noun: 'outlets', min: 10 });
+  },
+  critic(name) { person(cByName[name], 'critic'); },
+  outlet(name) { person(oByName[name], 'outlet'); },
+  async book(slug) {
+    const b = bySlug[slug]; if (!b) return head('<h1>Not found</h1>');
+    const L = (params, text) => `<a href="${href('books', '', params)}">${esc(text)}</a>`;
+    head(`<h1>${esc(b.title)}</h1><div class="meta">${L({ a: b.aut }, b.author)}${b.pub ? ' · ' + L({ p: b.pub }, b.pub) : ''}${b.date ? ' · ' + b.date : ''}${b.genres.length ? ' · ' + b.genres.map(g => L({ g }, g)).join(', ') : ''}<br>${distTxt(b.dist)}</div>`);
+    $('#out').innerHTML = '';
+    const d = await detail(slug);
+    if (S.view !== 'book' || S.arg !== slug) return;
+    showBookCover(b, d.cover);
+    $('#head').insertAdjacentHTML('beforeend', d.d ? `<p class="desc">${esc(d.d)}</p>` : '');
+    $('#out').innerHTML = d.r.filter(([, , , , , , src]) => !S.src || (S.src === 'bm' ? !src : src)).map(([, v, c, o, url, q, src, date]) => `<div class="rev"><div class="h"><b>${LABEL[v] || 'review'}</b>${date ? ' · ' + esc(date) : ''} · ${c ? cLink(cByName[c]) : 'Unsigned'}${o ? ', ' + oLink(oByName[o]) : ''}${url ? ` · <a href="${esc(url)}" target="_blank" rel="noopener">read ↗</a>` : ''}</div><p>${esc(q)}</p></div>`).join('') || '<p class="empty">No reviews</p>';
+  },
+};
+
+function person(e, kind) {
+  if (!e) return head('<h1>Not found</h1>');
+  const isC = kind === 'critic';
+  const rows = R.filter(r => (isC ? r.c : r.o) === e).map(r => {
+    const other = isC ? r.o : r.c;
+    return { ...r.b, b: r.b, v: r.v, loo: r.loo, diff: r.loo == null || !r.v ? null : r.v - r.loo, other, hay: r.b.hay + ' ' + (other?.hay || '') };
+  });
+  head(`<h1>${esc(e.name)}</h1><div class="meta">${int(e.n)} reviews · ${int(e.links)} ${isC ? 'outlets' : 'critics'} · ${distTxt(e.dist)} · mean ${f2(e.mean)}${e.vs != null ? ' · ' + sgn(e.vs) + ' vs. other reviewers of the same books' : ''}</div>`);
+  table([
+    { k: 'title', label: 'Book', f: r => titleCell(r.b) },
+    { k: 'author', label: 'Author', cls: 'desk', f: r => r.author ? `<span class="f" data-fk="a" data-fv="${esc(r.aut)}" title="Show only ${esc(r.aut)}">${esc(r.author)}</span>` : '' },
+    { k: 'date', label: 'Date', cls: 'nw', f: dateCell },
+    { k: 'v', label: 'Rating', num: 1, v: r => r.v || null, f: r => LABEL[r.v] || '<span class="d">unrated</span>' },
+    { k: 'loo', label: 'Others’ mean', num: 1, tip: TIP.loo, f: r => f2(r.loo) },
+    { k: 'diff', label: 'Diff', num: 1, f: r => sgn(r.diff) },
+    { k: 'other', label: isC ? 'Outlet' : 'Critic', cls: 'nw', v: r => r.other?.name ?? '', f: r => isC ? oLink(r.other) : cLink(r.other) },
+  ], rows, { sort: 'date', noun: 'reviews', min: 1, name: e.name });
+}
+
+function head(html) { $('#head').innerHTML = html; }
+
+const coverDialog = $('#cover-dialog');
+coverDialog.addEventListener('click', () => coverDialog.close());
+coverDialog.addEventListener('close', () => document.documentElement.classList.remove('cover-open'));
+
+function showBookCover(book, value) {
+  const cover = $('#book-cover');
+  let url;
+  try { url = new URL(value); } catch { return; }
+  if (url.protocol !== 'https:') return;
+  const img = new Image();
+  img.alt = `Cover of ${book.title}`;
+  img.referrerPolicy = 'no-referrer';
+  img.addEventListener('load', () => {
+    if (S.view === 'book' && S.arg === book.slug) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Enlarge cover of ${book.title}`);
+      button.append(img);
+      button.addEventListener('click', () => {
+        const enlarged = coverDialog.querySelector('img');
+        enlarged.src = img.src;
+        enlarged.alt = img.alt;
+        coverDialog.showModal();
+        document.documentElement.classList.add('cover-open');
+      });
+      cover.replaceChildren(button);
+      cover.hidden = false;
+    }
+  });
+  img.src = url.href;
+}
+
+function route() {
+  if (coverDialog.open) coverDialog.close();
+  const { view, arg, p } = parse();
+  S = { view, arg, params: p, q: p.get('q') || '', g: p.get('g') || '', y: p.get('y') || '', a: p.get('a') || '', p: p.get('p') || '', src: p.get('src') || '' };
+  aggregate(S.src);
+  $('#q').value = S.q;
+  T = null;
+  const listy = !['book', 'project', 'projects'].includes(view);
+  document.body.classList.toggle('book-page', view === 'book');
+  $('#book-cover').hidden = true;
+  $('#book-cover').replaceChildren();
+  $('#below').innerHTML = '';
+  $('#controls').style.display = $('#more').style.display = listy ? '' : 'none';
+  document.querySelectorAll('.bk').forEach(el => el.style.display = ['critics', 'outlets', 'authors'].includes(view) ? 'none' : '');
+  if (!listy) $('#count').textContent = '';
+  if (['books', 'critics', 'outlets', 'authors'].includes(view)) head('');
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('on', a.dataset.v === view || (view === 'project' && a.dataset.v === 'projects')));
+  V[view](arg);
+}
+let lastPath = '';
+addEventListener('hashchange', () => {
+  const path = location.hash.split('?')[0];
+  route();
+  if (path !== lastPath) window.scrollTo(0, 0);
+  lastPath = path;
+});
+load();
+</script>
+<script src="projects.js"></script>
+<script src="preview.js"></script>
+</body>
+</html>
