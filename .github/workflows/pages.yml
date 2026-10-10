@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths: ["data/**", "site/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
-  workflow_call:  # the data refresh calls this after committing new data
+  workflow_call:  # the daily data sync calls this after committing new data
 
 permissions:
   contents: read
@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}  # latest commit, including one the refresh job just pushed
+          ref: ${{ github.ref }}  # latest commit, including one the sync job just pushed
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
